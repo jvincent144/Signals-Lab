@@ -3,6 +3,8 @@
 # Downloads
 https://data.mendeley.com/datasets/7dybx7wyfn/3
 https://www.sciencedirect.com/science/article/abs/pii/S0957417417306292?via%3Dihub
+https://physionet.org/content/challenge-2017/1.0.0/
+https://physionet.org/content/challenge-2017/1.0.0/#files-panel
 
 # Fourier Transform Resources
 https://www.youtube.com/watch?v=r6sGWTCMz2k&t=150s
