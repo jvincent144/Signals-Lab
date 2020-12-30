@@ -79,15 +79,17 @@ class PhysioNetDataset(ProtoDataset):
         for raw_dir in self.raw_dirs:
             for raw_file in os.listdir(os.path.join(self.root, raw_dir)):
                 name, ext = raw_file.split('.')
-                label = self.encoding[df.loc[name].item()]
-                if("mat" == ext and (0 == label or 1 == label)):
-                    signal = loadmat(os.path.join(self.root, raw_dir, raw_file))["val"]
-                    sxx = self.process_step(signal)
-                    if(0 == (count%int(1/self.test_fraction))):
-                        torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[1], raw_file))
-                    else:
-                        torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[0], raw_file))
-                    count += 1
+                if("mat" == ext):
+                    label = self.encoding[df.loc[name].item()]
+                    if(0 == label or 1 == label):
+                        signal = loadmat(os.path.join(self.root, raw_dir, raw_file))["val"]
+                        if(9000 == signal.shape[-1]):
+                            sxx = self.process_step(signal)
+                            if(0 == (count%int(1/self.test_fraction))):
+                                torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[1], raw_file))
+                            else:
+                                torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[0], raw_file))
+                            count += 1
         print("Done!")
 
     def load(self):
