@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from scipy.io import loadmat
 from scipy.signal import spectrogram
+from skimage.transform import resize
 import matplotlib.pyplot as plt
 
 # Dataset
@@ -64,8 +65,9 @@ class PhysioNetDataset(ProtoDataset):
         return is_processed
 
     def process_step(self, signal):
-         _, _, sxx = spectrogram(signal, self.fs)
-         return sxx
+        signal = signal/np.max(signal)
+        _, _, sxx = spectrogram(signal, self.fs)
+        return sxx
 
     def process(self):
         print("Processing...")
@@ -85,10 +87,13 @@ class PhysioNetDataset(ProtoDataset):
                         signal = loadmat(os.path.join(self.root, raw_dir, raw_file))["val"]
                         if(9000 == signal.shape[-1]):
                             sxx = self.process_step(signal)
+                            sxx = np.squeeze(sxx, axis = 0)
+                            sxx_resized = resize(sxx, (256, 256))
+                            sxx_rgb = np.stack([sxx_resized, sxx_resized, sxx_resized], axis = 0)
                             if(0 == (count%int(1/self.test_fraction))):
-                                torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[1], raw_file))
+                                torch.save(torch.FloatTensor(sxx_rgb), os.path.join(self.root, self.processed_dirs[1], raw_file))
                             else:
-                                torch.save(torch.FloatTensor(sxx), os.path.join(self.root, self.processed_dirs[0], raw_file))
+                                torch.save(torch.FloatTensor(sxx_rgb), os.path.join(self.root, self.processed_dirs[0], raw_file))
                             count += 1
         print("Done!")
 
