@@ -56,11 +56,11 @@ class Trainer():
                 batch_probs = torch.squeeze(batch_probs, dim = 1)
                 batch_max_probs, batch_preds = torch.max(batch_probs, dim = -1)
                 for label in batch_labels:
-                    labels.append(label.cpu().detach().numpy())
+                    labels.append(label.cpu().detach().numpy().item())
                 for max_prob in batch_max_probs:
                     max_probs.append(max_prob.cpu().detach().numpy())
                 for pred in batch_preds:
-                    preds.append(pred)
+                    preds.append(pred.cpu().detach().numpy().item())
             tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
             fpr, tpr, _ = roc_curve(labels, max_probs)
             auc = roc_auc_score(labels, max_probs)
