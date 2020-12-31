@@ -1,3 +1,20 @@
+# System
+import os
+import sys
+
+# Math and Plotting
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Deep Learning
+import torch
+from torch.nn.functional import softmax
+
+# Metrics
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+
 class Trainer():
     def __init__(self, model, loss, optim):
         self.model = model
@@ -6,9 +23,12 @@ class Trainer():
 
     def train_step(self, train_loader):
         if(self.model.training):
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             loss = 0.0
             for batch_idx, batch_data in enumerate(train_loader):
                 data, batch_labels = batch_data
+                data = data.to(device)
+                batch_labels = batch_labels.to(device)
                 self.optim.zero_grad()
                 batch_probs = softmax(self.model(data), dim = -1)
                 batch_probs = torch.squeeze(batch_probs, dim = 1)
@@ -23,19 +43,22 @@ class Trainer():
     
     def test_step(self, test_loader):
         if(not self.model.training):
+            device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
             labels = []
             max_probs = []
             preds = []
             for batch_idx, batch_data in enumerate(test_loader):
                 data, batch_labels = batch_data
+                data = data.to(device)
+                batch_labels = batch_labels.to(device)
                 batch_probs = softmax(self.model(data), dim = -1)
                 batch_probs = torch.squeeze(batch_probs, dim = 1)
                 batch_probs = torch.squeeze(batch_probs, dim = 1)
                 batch_max_probs, batch_preds = torch.max(batch_probs, dim = -1)
                 for label in batch_labels:
-                    labels.append(label)
+                    labels.append(label.cpu().detach().numpy())
                 for max_prob in batch_max_probs:
-                    max_probs.append(max_prob.detach().numpy())
+                    max_probs.append(max_prob.cpu().detach().numpy())
                 for pred in batch_preds:
                     preds.append(pred)
             tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
