@@ -67,7 +67,11 @@ fprintf("z(1): %f\tz(2): %f\n", z(1), z(2))
 product = z(1)*z(2);
 quotient = z(1)/z(2);
 power = z(1)^3;
-fprintf("Product: %f\tQuotient: %f\tPower: %f\n", product, quotient, power)
+fprintf("Product: %f\tQuotient: %f\tPower: %f\n", product, quotient, power) % Only prints real components.
+% Convert to polar form
+a = [real(product) real(quotient) real(power)];
+b = [imag(product) imag(quotient) imag(power)];
+[th, r] = cart2pol(a, b)
 
 % Addition of complex numbers in cartesian space
 a = [5 3];
