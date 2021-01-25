@@ -1,16 +1,23 @@
 %{
 % Name: Joshua Vincent
 % Lab: BIOE 162
-% Session: M
+% Session: M | T
 % Date: 25 January 2021
 %}
+
+clear
 
 % Model a simple sinusoid
 fs = 300; % This is the sampling rate in the PhysioNet
 dt = 1/fs; % Time between samples
 ns = 30; % This is the median sample time in PhysioNet
 t = 0:dt:ns;
-y = sin(t);
+a = 1;
+f = 1; % 1 Hz
+period = 1/f;
+omega = 2*pi*f;
+phi = 0;
+y = a*sin((omega*t) + phi);
 
 % Plot the data continuously
 figure() % Create a new figure
@@ -22,17 +29,25 @@ title("Simple Sinusoid")
 
 % Zoom in on a single sample
 subplot(212) % Switch to second row
-xlim([0 dt])
+plot(t, y)
+xlim([0 period])
 xlabel("Time [s]")
 ylabel("Magnitude [mV]")
 title("Single Sample")
 
 % Plot the data discretely
 figure()
+subplot(211)
 stem(t, y)
 xlabel("Time [s]")
 ylabel("Magnitude [mV]") % As an example
 title("Simple Sinusoid")
+subplot(212)
+stem(t, y)
+xlim([0 period])
+xlabel("Time [s]")
+ylabel("Magnitude [mV]")
+title("Single Sample")
 
 % Changing between coordinate spaces
 a = [10 -13];
@@ -47,7 +62,7 @@ b = [5 -6];
 z = r.*exp(1j*th);
 product = z(1)*z(2);
 quotient = z(1)/z(2);
-power = z(1)**3;
+power = z(1)^3;
 
 % Addition of complex numbers in cartesian space
 a = [5 3];
@@ -66,13 +81,6 @@ a = 5;
 b = -1;
 [c, th] = condense(a, b);
 
-% What is the condition to condense sinusoids?
-% The sinusoids must have the same angular frequency and phase.
-function [c, th] = condense(a, b)
-    c = atan(-b/a);
-    th = acos(a/c);
-end
-
 % Plotting sinusoids and exponentially-varying sinusoids
 t = 0:dt:50;
 figure()
@@ -86,11 +94,21 @@ subplot(211)
 plot(t, y)
 xlabel("Time [s]")
 ylabel("Magnitude")
+title("Superposition of Sinusoids")
 
 omega1 = -0.2;
 omega2 = pi/4;
 a = 3;
-y = a*exp(omega1*t)*cos(omega2*t);
+y = a*exp(omega1*t).*cos(omega2*t);
 subplot(212)
+plot(t, y)
 xlabel("Time [s]")
 ylabel("Magnitude")
+title("Exponential Decay of Sinusoid")
+
+% What is the condition to condense sinusoids?
+% The sinusoids must have the same angular frequency and phase.
+function [c, th] = condense(a, b)
+    c = atan(-b/a);
+    th = acos(a/c);
+end
