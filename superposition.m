@@ -8,7 +8,7 @@
 clear
 
 % Model a simple sinusoid
-fs = 1800; % Why did I choose this sampling rate?
+fs = 6400;
 dt = 1/fs;
 ns = 10;
 t = 0:dt:ns;
@@ -33,7 +33,7 @@ yb = b*sin((omegab*t) + phib);
 yab = ya + yb;
 
 % Number of periods to display
-count = 1;
+count = 10;
 
 % Plot 'A' Note
 figure()
