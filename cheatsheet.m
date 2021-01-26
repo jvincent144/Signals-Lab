@@ -49,4 +49,6 @@ C = gallery('lehmer', 3)
 % Eigen Decomposition
 [V, D] = eig(C)
 
-% Prove to yourself that C*D = V*D
+% Prove to yourself that C*V = V*D
+lhs = C*V
+rhs = V*D
