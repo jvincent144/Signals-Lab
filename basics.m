@@ -92,6 +92,8 @@ a = 5;
 b = -1;
 [c, th] = condense(a, b);
 fprintf("c: %f\ttheta: %f\n", c, th)
+[th, c] = cart2pol(a, -b);
+fprintf("c: %f\ttheta: %f\n", c, th)
 
 % Plotting sinusoids and exponentially-varying sinusoids
 t = 0:dt:50;
@@ -121,6 +123,6 @@ title("Exponential Decay of Sinusoid")
 % What is the condition to condense sinusoids?
 % The sinusoids must have the same angular frequency and phase.
 function [c, th] = condense(a, b)
-    c = atan(-b/a);
-    th = acos(a/c);
+    c = sqrt(a^2 + b^2);
+    th = atan(-b/a);
 end
