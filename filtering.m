@@ -1,4 +1,4 @@
-PhysioNetDataToMATFormat() % Convert data in training2017, downloaded from the Physionet archive, to MAT-file format
+% PhysioNetDataToMATFormat() % Convert data in training2017, downloaded from the Physionet archive, to MAT-file format
 load PhysionetData % Load data from the "mat" file into workspace variables
 
 % Remove short signals and truncate long signals
@@ -37,7 +37,7 @@ xlabel("Frequency [Hz]")
 ylabel("Magnitude")
 
 % Instantiate a low pass filter in the Frequency Domain
-omega = 10; % Cutoff frequency
+omega = 20; % Cutoff frequency
 num = 1;
 denom = [1/omega 1];
 sys = tf(num, denom) % This is H(s)
