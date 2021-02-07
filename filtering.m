@@ -5,13 +5,41 @@ load PhysionetData % Load data from the "mat" file into workspace variables
 [Signals, Labels] = segmentSignals(Signals, Labels);
 
 fs = 300; % Sampling rate
+dt = 1/fs; % Period between samples
 ns = 30; % Sample over 30 seconds
-t = 0:1/fs:ns; % 1/fs spacing between samples
+t = 0:dt:ns; % 1/fs spacing between samples
 
 % Let's look at a single signal
 idx = 1;
 signal = Signals{idx};
 label = Labels(idx);
+
+% C
+% Let's find the peak to peak
+start = 1; % Start index
+cutoff = 300; % One second
+[val1, idx1] = max(signal(start:cutoff));
+[val2, idx2] = min(signal(start:cutoff));
+p2p = val1 - val2;
+
+% D
+% Visually estimated period between R complexes
+est = 0.82;
+
+% E & F
+start = 1; % Start index
+cutoff = est*300; % One second
+[val1, idx1] = max(signal(start:cutoff));
+start = start + cutoff;
+cutoff = cutoff + cutoff;
+[val2, idx2] = max(signal(start:cutoff));
+idx2 = idx2 + (est*300);
+% Period between R complexes
+period = t(idx2) - t(idx1);
+
+% G
+hf = 1/period;
+hr = hf*60;
 
 figure(1)
 plot(t(1:end - 1), signal)
@@ -37,7 +65,7 @@ xlabel("Frequency [Hz]")
 ylabel("Magnitude")
 
 % Instantiate a low pass filter in the Frequency Domain
-omega = 20; % Cutoff frequency
+omega = 10; % Cutoff frequency
 num = 1;
 denom = [1/omega 1];
 sys = tf(num, denom) % This is H(s)
